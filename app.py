@@ -690,109 +690,95 @@ def openapi_spec():
         "info": {
             "title": "Hotel Search API",
             "version": "1.0.0",
-            "description": "API for searching hotels based on customer preferences"
+            "description": "Simple API for searching hotels"
         },
         "servers": [
             {
-                "url": "https://hotel-api-flask-production.up.railway.app",
-                "description": "Production server"
+                "url": "https://hotel-api-flask-production.up.railway.app"
             }
         ],
         "paths": {
             "/api/hotels/search": {
                 "get": {
                     "operationId": "searchHotels",
-                    "summary": "Search for hotels",
-                    "description": "Search hotels based on location, dates, and preferences",
+                    "summary": "Search hotels",
                     "parameters": [
                         {
                             "name": "location",
                             "in": "query",
                             "required": True,
-                            "schema": {"type": "string"},
-                            "description": "City or location"
+                            "schema": {"type": "string"}
                         },
                         {
                             "name": "check_in_date",
                             "in": "query",
                             "required": True,
-                            "schema": {"type": "string"},
-                            "description": "Check-in date (YYYY-MM-DD)"
+                            "schema": {"type": "string"}
                         },
                         {
                             "name": "check_out_date",
                             "in": "query",
                             "required": True,
-                            "schema": {"type": "string"},
-                            "description": "Check-out date (YYYY-MM-DD)"
+                            "schema": {"type": "string"}
                         },
                         {
                             "name": "adults",
                             "in": "query",
                             "required": True,
-                            "schema": {"type": "integer"},
-                            "description": "Number of adults"
+                            "schema": {"type": "integer"}
                         },
                         {
                             "name": "children",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "integer"},
-                            "description": "Number of children"
+                            "schema": {"type": "integer"}
                         },
                         {
                             "name": "amenities",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "string"},
-                            "description": "Preferred amenities (comma-separated)"
+                            "schema": {"type": "string"}
                         },
                         {
                             "name": "min_price",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "number"},
-                            "description": "Minimum price per night"
+                            "schema": {"type": "number"}
                         },
                         {
                             "name": "max_price",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "number"},
-                            "description": "Maximum price per night"
+                            "schema": {"type": "number"}
                         },
                         {
                             "name": "min_stars",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "integer"},
-                            "description": "Minimum star rating (1-5)"
+                            "schema": {"type": "integer"}
                         },
                         {
                             "name": "max_stars",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "integer"},
-                            "description": "Maximum star rating (1-5)"
+                            "schema": {"type": "integer"}
                         },
                         {
                             "name": "min_rating",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "number"},
-                            "description": "Minimum guest rating (0.0-5.0)"
+                            "schema": {"type": "number"}
                         },
                         {
                             "name": "max_rating",
                             "in": "query",
                             "required": False,
-                            "schema": {"type": "number"},
-                            "description": "Maximum guest rating (0.0-5.0)"
+                            "schema": {"type": "number"}
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Successful search response",
+                            "description": "Success",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -805,36 +791,16 @@ def openapi_spec():
                                                     "top_5_hotels": {
                                                         "type": "array",
                                                         "items": {"$ref": "#/components/schemas/Hotel"}
-                                                    },
-                                                    "price_range": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "min": {"type": "integer"},
-                                                            "max": {"type": "integer"}
-                                                        }
-                                                    },
-                                                    "average_rating": {"type": "number"}
+                                                    }
                                                 }
-                                            },
-                                            "search_criteria": {"type": "object"},
-                                            "message": {"type": "string"}
+                                            }
                                         }
                                     }
                                 }
                             }
                         },
                         "400": {
-                            "description": "Bad request",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "properties": {
-                                            "error": {"type": "string"}
-                                        }
-                                    }
-                                }
-                            }
+                            "description": "Bad request"
                         }
                     }
                 }
@@ -842,11 +808,10 @@ def openapi_spec():
             "/api/locations": {
                 "get": {
                     "operationId": "getLocations",
-                    "summary": "Get available locations",
-                    "description": "Returns list of available hotel locations",
+                    "summary": "Get locations",
                     "responses": {
                         "200": {
-                            "description": "List of locations",
+                            "description": "Success",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -867,11 +832,10 @@ def openapi_spec():
             "/api/amenities": {
                 "get": {
                     "operationId": "getAmenities",
-                    "summary": "Get available amenities",
-                    "description": "Returns list of available hotel amenities",
+                    "summary": "Get amenities",
                     "responses": {
                         "200": {
-                            "description": "List of amenities",
+                            "description": "Success",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -898,17 +862,26 @@ def openapi_spec():
                         "hotel_id": {"type": "string"},
                         "name": {"type": "string"},
                         "location": {"type": "string"},
-                        "check_in_date": {"type": "string"},
-                        "check_out_date": {"type": "string"},
                         "stars": {"type": "integer"},
                         "guest_rating": {"type": "number"},
-                        "amenities": {"type": "string"},
-                        "price_per_night": {"type": "integer"},
-                        "max_adults": {"type": "integer"},
-                        "max_children": {"type": "integer"}
+                        "price_per_night": {"type": "integer"}
                     }
                 }
             }
+        }
+    })
+
+@app.route('/')
+def root():
+    """Root endpoint"""
+    return jsonify({
+        'message': 'Hotel API is running',
+        'version': '1.0.0',
+        'endpoints': {
+            'search': '/api/hotels/search',
+            'locations': '/api/locations',
+            'amenities': '/api/amenities',
+            'openapi': '/openapi.json'
         }
     })
 
