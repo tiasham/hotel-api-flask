@@ -979,6 +979,16 @@ def mcp_execute():
             'error': str(e)
         }), 500
 
+@app.route('/mcp/health', methods=['GET'])
+def mcp_health():
+    """MCP health check"""
+    return jsonify({
+        'status': 'healthy',
+        'message': 'MCP Hotel Server is running',
+        'timestamp': datetime.now().isoformat(),
+        'tools': ['searchHotels', 'getLocations', 'getAmenities']
+    })
+
 def search_hotels_logic(parameters):
     """Logic for searching hotels (extracted from existing search endpoint)"""
     try:
