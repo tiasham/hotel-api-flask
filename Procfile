@@ -1,1 +1,1 @@
-web: gunicorn simple_mcp_server:app 
+web: gunicorn mcp_openapi_server:app 
