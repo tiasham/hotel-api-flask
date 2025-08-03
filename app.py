@@ -632,56 +632,6 @@ class TestEndpoint(Resource):
             }
         })
 
-@api.route('/')
-class Home(Resource):
-    """API documentation"""
-    @api.doc('home')
-    def get(self):
-        """API documentation"""
-        return jsonify({
-            'message': 'Hotel API',
-            'version': '1.0.0',
-            'endpoints': {
-                'GET /api/hotels': 'Get all hotels with optional filtering (sorted by guest rating desc)',
-                'GET /api/hotels/advanced': 'Get hotels with advanced filtering and custom sorting options',
-                'GET /api/hotels/search': 'Comprehensive search with all parameters - returns top 5 by rating',
-                'GET /api/hotels/<id>': 'Get a specific hotel by ID',
-                'GET /api/locations': 'Get all available locations',
-                'GET /api/amenities': 'Get all available amenities',
-                'GET /api/stats': 'Get hotel statistics',
-                'GET /health': 'Health check endpoint'
-            },
-            'filter_parameters': {
-                'location': 'Filter by location (string)',
-                'check_in_date': 'Filter by check-in date (YYYY-MM-DD)',
-                'check_out_date': 'Filter by check-out date (YYYY-MM-DD)',
-                'min_stars': 'Minimum star rating (integer)',
-                'max_stars': 'Maximum star rating (integer)',
-                'min_rating': 'Minimum guest rating (float)',
-                'max_rating': 'Maximum guest rating (float)',
-                'amenities': 'Filter by amenities (comma-separated)',
-                'min_price': 'Minimum price per night (float)',
-                'max_price': 'Maximum price per night (float)',
-                'adults': 'Number of adults (integer)',
-                'children': 'Number of children (integer)'
-            },
-            'advanced_sorting_parameters': {
-                'sort_by': 'Sort by field (hotel_id, hotel_name, location, check_in_date, check_out_date, stars, guest_rating, price_per_night, max_adults, max_children)',
-                'sort_order': 'Sort order (asc or desc)'
-            },
-            'search_endpoint_parameters': {
-                'required': ['location', 'check_in_date', 'check_out_date', 'adults'],
-                'optional': ['children', 'amenities', 'min_price', 'max_price', 'min_stars', 'max_stars', 'min_rating', 'max_rating']
-            },
-            'examples': {
-                'basic_filtering': '/api/hotels?location=New York&min_stars=4&max_price=200&adults=2',
-                'advanced_filtering': '/api/hotels/advanced?location=Mumbai&amenities=Pool,Beach&sort_by=price_per_night&sort_order=asc',
-                'comprehensive_search': '/api/hotels/search?location=Mumbai&check_in_date=2024-06-01&check_out_date=2024-06-05&adults=2&children=1&amenities=Gym,Pool&max_price=5000&min_stars=4',
-                'rating_filter': '/api/hotels?min_rating=4.5&max_price=300',
-                'date_filter': '/api/hotels?check_in_date=2024-06-01&check_out_date=2024-06-05'
-            }
-        })
-
 @app.route('/openapi.json')
 def openapi_spec():
     """Return OpenAPI specification for Retell"""
@@ -985,20 +935,34 @@ def search_hotels_logic(parameters):
             df = df[df['location'].str.contains(parameters['location'], case=False, na=False)]
         
         if 'check_in_date' in parameters and parameters['check_in_date']:
-            check_in = pd.to_datetime(parameters['check_in_date'])
-            df = df[df['check_in_date'] >= check_in]
+            try:
+                check_in = pd.to_datetime(parameters['check_in_date'])
+                df = df[pd.to_datetime(df['check_in_date']) >= check_in]
+            except:
+                # If date parsing fails, skip this filter
+                pass
         
         if 'check_out_date' in parameters and parameters['check_out_date']:
-            check_out = pd.to_datetime(parameters['check_out_date'])
-            df = df[df['check_out_date'] <= check_out]
+            try:
+                check_out = pd.to_datetime(parameters['check_out_date'])
+                df = df[pd.to_datetime(df['check_out_date']) <= check_out]
+            except:
+                # If date parsing fails, skip this filter
+                pass
         
         if 'adults' in parameters and parameters['adults']:
-            adults = int(parameters['adults'])
-            df = df[df['max_adults'] >= adults]
+            try:
+                adults = int(parameters['adults'])
+                df = df[df['max_adults'] >= adults]
+            except:
+                pass
         
         if 'children' in parameters and parameters['children']:
-            children = int(parameters['children'])
-            df = df[df['max_children'] >= children]
+            try:
+                children = int(parameters['children'])
+                df = df[df['max_children'] >= children]
+            except:
+                pass
         
         if 'amenities' in parameters and parameters['amenities']:
             amenities = parameters['amenities'].split(',')
@@ -1006,28 +970,46 @@ def search_hotels_logic(parameters):
                 df = df[df['amenities'].str.contains(amenity.strip(), case=False, na=False)]
         
         if 'min_price' in parameters and parameters['min_price']:
-            min_price = float(parameters['min_price'])
-            df = df[df['price_per_night'] >= min_price]
+            try:
+                min_price = float(parameters['min_price'])
+                df = df[df['price_per_night'] >= min_price]
+            except:
+                pass
         
         if 'max_price' in parameters and parameters['max_price']:
-            max_price = float(parameters['max_price'])
-            df = df[df['price_per_night'] <= max_price]
+            try:
+                max_price = float(parameters['max_price'])
+                df = df[df['price_per_night'] <= max_price]
+            except:
+                pass
         
         if 'min_stars' in parameters and parameters['min_stars']:
-            min_stars = int(parameters['min_stars'])
-            df = df[df['stars'] >= min_stars]
+            try:
+                min_stars = int(parameters['min_stars'])
+                df = df[df['stars'] >= min_stars]
+            except:
+                pass
         
         if 'max_stars' in parameters and parameters['max_stars']:
-            max_stars = int(parameters['max_stars'])
-            df = df[df['stars'] <= max_stars]
+            try:
+                max_stars = int(parameters['max_stars'])
+                df = df[df['stars'] <= max_stars]
+            except:
+                pass
         
         if 'min_rating' in parameters and parameters['min_rating']:
-            min_rating = float(parameters['min_rating'])
-            df = df[df['guest_rating'] >= min_rating]
+            try:
+                min_rating = float(parameters['min_rating'])
+                df = df[df['guest_rating'] >= min_rating]
+            except:
+                pass
         
         if 'max_rating' in parameters and parameters['max_rating']:
-            max_rating = float(parameters['max_rating'])
-            df = df[df['guest_rating'] <= max_rating]
+            try:
+                max_rating = float(parameters['max_rating'])
+                df = df[df['guest_rating'] <= max_rating]
+            except:
+                pass
         
         # Sort by rating and get top 5
         df = df.sort_values('guest_rating', ascending=False).head(5)
@@ -1047,6 +1029,22 @@ def search_hotels_logic(parameters):
             'error': str(e),
             'message': 'Error occurred while searching hotels'
         }
+
+@app.route('/')
+def home():
+    """Root endpoint"""
+    return jsonify({
+        'message': 'Hotel API is running',
+        'version': '1.0.0',
+        'endpoints': {
+            'search': '/api/hotels/search',
+            'locations': '/api/locations',
+            'amenities': '/api/amenities',
+            'openapi': '/openapi.json',
+            'mcp_health': '/mcp/health',
+            'mcp_tools': '/mcp/tools'
+        }
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
