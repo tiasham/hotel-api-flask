@@ -871,20 +871,6 @@ def openapi_spec():
         }
     })
 
-@app.route('/')
-def root():
-    """Root endpoint"""
-    return jsonify({
-        'message': 'Hotel API is running',
-        'version': '1.0.0',
-        'endpoints': {
-            'search': '/api/hotels/search',
-            'locations': '/api/locations',
-            'amenities': '/api/amenities',
-            'openapi': '/openapi.json'
-        }
-    })
-
 @app.route('/mcp/tools', methods=['GET'])
 def mcp_tools():
     """MCP tool discovery endpoint for Retell"""
