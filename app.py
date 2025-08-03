@@ -308,6 +308,131 @@ def get_hotels_advanced():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/hotels/search', methods=['GET'])
+def search_hotels():
+    """Comprehensive hotel search with all parameters and top 5 results by rating"""
+    try:
+        # Load hotel data
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        # Required parameters (primary filters)
+        location = request.args.get('location')
+        check_in_date = request.args.get('check_in_date')
+        check_out_date = request.args.get('check_out_date')
+        adults = request.args.get('adults', type=int)
+        children = request.args.get('children', type=int)
+        
+        # Optional parameters (preferences)
+        amenities = request.args.get('amenities')
+        min_price = request.args.get('min_price', type=float)
+        max_price = request.args.get('max_price', type=float)
+        min_stars = request.args.get('min_stars', type=int)
+        max_stars = request.args.get('max_stars', type=int)
+        min_rating = request.args.get('min_rating', type=float)
+        max_rating = request.args.get('max_rating', type=float)
+        
+        # Validate required parameters
+        if not location:
+            return jsonify({'error': 'Location is required'}), 400
+        
+        if not check_in_date:
+            return jsonify({'error': 'Check-in date is required'}), 400
+        
+        if not check_out_date:
+            return jsonify({'error': 'Check-out date is required'}), 400
+        
+        if adults is None:
+            return jsonify({'error': 'Number of adults is required'}), 400
+        
+        # Apply primary filters (required)
+        df = df[df['location'].str.contains(location, case=False, na=False)]
+        
+        try:
+            check_in = pd.to_datetime(check_in_date)
+            df = df[df['check_in_date'] >= check_in]
+        except:
+            return jsonify({'error': 'Invalid check-in date format. Use YYYY-MM-DD'}), 400
+        
+        try:
+            check_out = pd.to_datetime(check_out_date)
+            df = df[df['check_out_date'] <= check_out]
+        except:
+            return jsonify({'error': 'Invalid check-out date format. Use YYYY-MM-DD'}), 400
+        
+        if adults is not None:
+            df = df[df['max_adults'] >= adults]
+        
+        if children is not None:
+            df = df[df['max_children'] >= children]
+        
+        # Apply preference filters (optional)
+        if amenities:
+            amenity_list = [amenity.strip() for amenity in amenities.split(',')]
+            for amenity in amenity_list:
+                df = df[df['amenities'].str.contains(amenity, case=False, na=False)]
+        
+        if min_price is not None:
+            df = df[df['price_per_night'] >= min_price]
+        
+        if max_price is not None:
+            df = df[df['price_per_night'] <= max_price]
+        
+        if min_stars is not None:
+            df = df[df['stars'] >= min_stars]
+        
+        if max_stars is not None:
+            df = df[df['stars'] <= max_stars]
+        
+        if min_rating is not None:
+            df = df[df['guest_rating'] >= min_rating]
+        
+        if max_rating is not None:
+            df = df[df['guest_rating'] <= max_rating]
+        
+        # Sort by guest rating in descending order and get top 5
+        df = df.sort_values('guest_rating', ascending=False)
+        top_5_hotels = df.head(5)
+        
+        # Convert to list of dictionaries
+        hotels = top_5_hotels.to_dict('records')
+        
+        # Calculate search summary
+        total_matches = len(df)
+        price_range = {
+            'min': int(df['price_per_night'].min()) if not df.empty else 0,
+            'max': int(df['price_per_night'].max()) if not df.empty else 0
+        } if not df.empty else {'min': 0, 'max': 0}
+        
+        return jsonify({
+            'search_results': {
+                'total_matches': total_matches,
+                'top_5_hotels': hotels,
+                'price_range': price_range,
+                'average_rating': round(df['guest_rating'].mean(), 2) if not df.empty else 0
+            },
+            'search_criteria': {
+                'location': location,
+                'check_in_date': check_in_date,
+                'check_out_date': check_out_date,
+                'adults': adults,
+                'children': children,
+                'amenities': amenities,
+                'min_price': min_price,
+                'max_price': max_price,
+                'min_stars': min_stars,
+                'max_stars': max_stars,
+                'min_rating': min_rating,
+                'max_rating': max_rating
+            },
+            'message': f"Found {total_matches} hotels matching your criteria. Showing top 5 by rating."
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/locations', methods=['GET'])
 def get_locations():
     """Get all available locations"""
@@ -392,10 +517,12 @@ def home():
         'endpoints': {
             'GET /api/hotels': 'Get all hotels with optional filtering (sorted by guest rating desc)',
             'GET /api/hotels/advanced': 'Get hotels with advanced filtering and custom sorting options',
+            'GET /api/hotels/search': 'Comprehensive search with all parameters - returns top 5 by rating',
             'GET /api/hotels/<id>': 'Get a specific hotel by ID',
             'GET /api/locations': 'Get all available locations',
             'GET /api/amenities': 'Get all available amenities',
-            'GET /api/stats': 'Get hotel statistics'
+            'GET /api/stats': 'Get hotel statistics',
+            'GET /health': 'Health check endpoint'
         },
         'filter_parameters': {
             'location': 'Filter by location (string)',
@@ -415,9 +542,14 @@ def home():
             'sort_by': 'Sort by field (hotel_id, hotel_name, location, check_in_date, check_out_date, stars, guest_rating, price_per_night, max_adults, max_children)',
             'sort_order': 'Sort order (asc or desc)'
         },
+        'search_endpoint_parameters': {
+            'required': ['location', 'check_in_date', 'check_out_date', 'adults'],
+            'optional': ['children', 'amenities', 'min_price', 'max_price', 'min_stars', 'max_stars', 'min_rating', 'max_rating']
+        },
         'examples': {
             'basic_filtering': '/api/hotels?location=New York&min_stars=4&max_price=200&adults=2',
-            'advanced_filtering': '/api/hotels/advanced?location=Miami&amenities=Pool,Beach&sort_by=price_per_night&sort_order=asc',
+            'advanced_filtering': '/api/hotels/advanced?location=Mumbai&amenities=Pool,Beach&sort_by=price_per_night&sort_order=asc',
+            'comprehensive_search': '/api/hotels/search?location=Mumbai&check_in_date=2024-06-01&check_out_date=2024-06-05&adults=2&children=1&amenities=Gym,Pool&max_price=5000&min_stars=4',
             'rating_filter': '/api/hotels?min_rating=4.5&max_price=300',
             'date_filter': '/api/hotels?check_in_date=2024-06-01&check_out_date=2024-06-05'
         }
