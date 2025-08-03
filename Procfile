@@ -1,1 +1,1 @@
-web: gunicorn retell_compatible_server:app 
+web: gunicorn retell_specific_server:app 
