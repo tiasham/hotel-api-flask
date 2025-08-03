@@ -1,0 +1,418 @@
+from flask import Flask, request, jsonify
+import pandas as pd
+from datetime import datetime
+import os
+
+app = Flask(__name__)
+
+# Load hotel data from CSV file
+def load_hotel_data():
+    """Load hotel data from CSV file"""
+    csv_file = 'Hotel_Dataset.csv'
+    if not os.path.exists(csv_file):
+        # Create sample data if file doesn't exist
+        create_sample_data()
+    
+    try:
+        df = pd.read_csv(csv_file)
+        # Convert date columns to datetime if they exist
+        if 'check_in_date' in df.columns:
+            df['check_in_date'] = pd.to_datetime(df['check_in_date'])
+        if 'check_out_date' in df.columns:
+            df['check_out_date'] = pd.to_datetime(df['check_out_date'])
+        return df
+    except Exception as e:
+        print(f"Error loading hotel data: {e}")
+        return pd.DataFrame()
+
+def create_sample_data():
+    """Create sample hotel data CSV file"""
+    sample_data = {
+        'hotel_id': range(1, 21),
+        'hotel_name': [
+            'Grand Hotel & Spa', 'Seaside Resort', 'Mountain View Lodge', 'City Center Hotel',
+            'Beachfront Paradise', 'Historic Inn', 'Business Plaza Hotel', 'Garden Retreat',
+            'Luxury Tower', 'Cozy Cottage Inn', 'Riverside Hotel', 'Airport Express',
+            'Downtown Suites', 'Countryside Manor', 'Ocean View Resort', 'Urban Boutique',
+            'Family Resort', 'Executive Hotel', 'Holiday Inn Express', 'Premium Lodge'
+        ],
+        'location': [
+            'New York', 'Miami', 'Denver', 'Chicago', 'Los Angeles', 'Boston', 'Atlanta',
+            'Seattle', 'Las Vegas', 'Portland', 'Austin', 'Phoenix', 'Dallas', 'Nashville',
+            'San Diego', 'San Francisco', 'Orlando', 'Houston', 'Philadelphia', 'Detroit'
+        ],
+        'check_in_date': [
+            '2024-01-15', '2024-01-20', '2024-02-01', '2024-02-10', '2024-02-15',
+            '2024-03-01', '2024-03-10', '2024-03-20', '2024-04-01', '2024-04-10',
+            '2024-04-20', '2024-05-01', '2024-05-10', '2024-05-20', '2024-06-01',
+            '2024-06-10', '2024-06-20', '2024-07-01', '2024-07-10', '2024-07-20'
+        ],
+        'check_out_date': [
+            '2024-01-18', '2024-01-23', '2024-02-04', '2024-02-13', '2024-02-18',
+            '2024-03-04', '2024-03-13', '2024-03-23', '2024-04-04', '2024-04-13',
+            '2024-04-23', '2024-05-04', '2024-05-13', '2024-05-23', '2024-06-04',
+            '2024-06-13', '2024-06-23', '2024-07-04', '2024-07-13', '2024-07-23'
+        ],
+        'stars': [4, 5, 3, 4, 5, 3, 4, 4, 5, 3, 4, 3, 4, 4, 5, 4, 4, 5, 3, 4],
+        'guest_rating': [4.2, 4.8, 3.9, 4.1, 4.7, 3.8, 4.3, 4.0, 4.9, 3.7, 4.2, 3.6, 4.4, 4.1, 4.6, 4.3, 4.5, 4.8, 3.9, 4.2],
+        'amenities': [
+            'WiFi,Pool,Gym,Spa', 'WiFi,Pool,Beach,Gym', 'WiFi,Gym,Restaurant', 'WiFi,Business Center,Gym',
+            'WiFi,Pool,Beach,Spa', 'WiFi,Restaurant,Bar', 'WiFi,Business Center,Restaurant', 'WiFi,Garden,Restaurant',
+            'WiFi,Pool,Gym,Spa,Restaurant', 'WiFi,Restaurant', 'WiFi,Pool,Restaurant', 'WiFi,Shuttle',
+            'WiFi,Business Center,Restaurant', 'WiFi,Garden,Pool', 'WiFi,Pool,Beach,Gym', 'WiFi,Restaurant,Bar',
+            'WiFi,Pool,Kids Club,Gym', 'WiFi,Business Center,Gym,Spa', 'WiFi,Breakfast', 'WiFi,Gym,Restaurant'
+        ],
+        'price_per_night': [150, 300, 120, 180, 250, 100, 160, 140, 400, 90, 130, 110, 170, 125, 280, 200, 220, 350, 95, 135],
+        'max_adults': [2, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 4, 2, 2, 2],
+        'max_children': [2, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1]
+    }
+    
+    df = pd.DataFrame(sample_data)
+    df.to_csv('Hotel_Dataset.csv', index=False)
+    print("Sample hotel data created successfully as Hotel_Dataset.csv!")
+
+@app.route('/api/hotels', methods=['GET'])
+def get_hotels():
+    """Get all hotels with optional filtering"""
+    try:
+        # Load hotel data
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        # Get filter parameters
+        location = request.args.get('location')
+        check_in_date = request.args.get('check_in_date')
+        check_out_date = request.args.get('check_out_date')
+        min_stars = request.args.get('min_stars', type=int)
+        max_stars = request.args.get('max_stars', type=int)
+        min_rating = request.args.get('min_rating', type=float)
+        max_rating = request.args.get('max_rating', type=float)
+        amenities = request.args.get('amenities')
+        min_price = request.args.get('min_price', type=float)
+        max_price = request.args.get('max_price', type=float)
+        adults = request.args.get('adults', type=int)
+        children = request.args.get('children', type=int)
+        
+        # Apply filters
+        if location:
+            df = df[df['location'].str.contains(location, case=False, na=False)]
+        
+        if check_in_date:
+            try:
+                check_in = pd.to_datetime(check_in_date)
+                df = df[df['check_in_date'] >= check_in]
+            except:
+                pass
+        
+        if check_out_date:
+            try:
+                check_out = pd.to_datetime(check_out_date)
+                df = df[df['check_out_date'] <= check_out]
+            except:
+                pass
+        
+        if min_stars is not None:
+            df = df[df['stars'] >= min_stars]
+        
+        if max_stars is not None:
+            df = df[df['stars'] <= max_stars]
+        
+        if min_rating is not None:
+            df = df[df['guest_rating'] >= min_rating]
+        
+        if max_rating is not None:
+            df = df[df['guest_rating'] <= max_rating]
+        
+        if amenities:
+            amenity_list = [amenity.strip() for amenity in amenities.split(',')]
+            for amenity in amenity_list:
+                df = df[df['amenities'].str.contains(amenity, case=False, na=False)]
+        
+        if min_price is not None:
+            df = df[df['price_per_night'] >= min_price]
+        
+        if max_price is not None:
+            df = df[df['price_per_night'] <= max_price]
+        
+        if adults is not None:
+            df = df[df['max_adults'] >= adults]
+        
+        if children is not None:
+            df = df[df['max_children'] >= children]
+        
+        # Sort by guest rating in descending order
+        df = df.sort_values('guest_rating', ascending=False)
+        
+        # Convert to list of dictionaries
+        hotels = df.to_dict('records')
+        
+        return jsonify({
+            'hotels': hotels,
+            'total_count': len(hotels),
+            'filters_applied': {
+                'location': location,
+                'check_in_date': check_in_date,
+                'check_out_date': check_out_date,
+                'min_stars': min_stars,
+                'max_stars': max_stars,
+                'min_rating': min_rating,
+                'max_rating': max_rating,
+                'amenities': amenities,
+                'min_price': min_price,
+                'max_price': max_price,
+                'adults': adults,
+                'children': children
+            },
+            'sorting': 'guest_rating_desc'
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/hotels/<int:hotel_id>', methods=['GET'])
+def get_hotel(hotel_id):
+    """Get a specific hotel by ID"""
+    try:
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        hotel = df[df['hotel_id'] == hotel_id]
+        
+        if hotel.empty:
+            return jsonify({'error': 'Hotel not found'}), 404
+        
+        return jsonify(hotel.iloc[0].to_dict())
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/hotels/advanced', methods=['GET'])
+def get_hotels_advanced():
+    """Get hotels with advanced filtering and sorting options"""
+    try:
+        # Load hotel data
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        # Get filter parameters
+        location = request.args.get('location')
+        check_in_date = request.args.get('check_in_date')
+        check_out_date = request.args.get('check_out_date')
+        min_stars = request.args.get('min_stars', type=int)
+        max_stars = request.args.get('max_stars', type=int)
+        min_rating = request.args.get('min_rating', type=float)
+        max_rating = request.args.get('max_rating', type=float)
+        amenities = request.args.get('amenities')
+        min_price = request.args.get('min_price', type=float)
+        max_price = request.args.get('max_price', type=float)
+        adults = request.args.get('adults', type=int)
+        children = request.args.get('children', type=int)
+        
+        # Get sorting parameters
+        sort_by = request.args.get('sort_by', 'guest_rating')  # Default sort by guest rating
+        sort_order = request.args.get('sort_order', 'desc')  # Default descending order
+        
+        # Validate sort_by parameter
+        valid_sort_fields = ['hotel_id', 'hotel_name', 'location', 'check_in_date', 'check_out_date', 
+                           'stars', 'guest_rating', 'price_per_night', 'max_adults', 'max_children']
+        if sort_by not in valid_sort_fields:
+            sort_by = 'guest_rating'
+        
+        # Validate sort_order parameter
+        if sort_order not in ['asc', 'desc']:
+            sort_order = 'desc'
+        
+        # Apply filters
+        if location:
+            df = df[df['location'].str.contains(location, case=False, na=False)]
+        
+        if check_in_date:
+            try:
+                check_in = pd.to_datetime(check_in_date)
+                df = df[df['check_in_date'] >= check_in]
+            except:
+                pass
+        
+        if check_out_date:
+            try:
+                check_out = pd.to_datetime(check_out_date)
+                df = df[df['check_out_date'] <= check_out]
+            except:
+                pass
+        
+        if min_stars is not None:
+            df = df[df['stars'] >= min_stars]
+        
+        if max_stars is not None:
+            df = df[df['stars'] <= max_stars]
+        
+        if min_rating is not None:
+            df = df[df['guest_rating'] >= min_rating]
+        
+        if max_rating is not None:
+            df = df[df['guest_rating'] <= max_rating]
+        
+        if amenities:
+            amenity_list = [amenity.strip() for amenity in amenities.split(',')]
+            for amenity in amenity_list:
+                df = df[df['amenities'].str.contains(amenity, case=False, na=False)]
+        
+        if min_price is not None:
+            df = df[df['price_per_night'] >= min_price]
+        
+        if max_price is not None:
+            df = df[df['price_per_night'] <= max_price]
+        
+        if adults is not None:
+            df = df[df['max_adults'] >= adults]
+        
+        if children is not None:
+            df = df[df['max_children'] >= children]
+        
+        # Sort by specified field and order
+        ascending = sort_order == 'asc'
+        df = df.sort_values(sort_by, ascending=ascending)
+        
+        # Convert to list of dictionaries
+        hotels = df.to_dict('records')
+        
+        return jsonify({
+            'hotels': hotels,
+            'total_count': len(hotels),
+            'filters_applied': {
+                'location': location,
+                'check_in_date': check_in_date,
+                'check_out_date': check_out_date,
+                'min_stars': min_stars,
+                'max_stars': max_stars,
+                'min_rating': min_rating,
+                'max_rating': max_rating,
+                'amenities': amenities,
+                'min_price': min_price,
+                'max_price': max_price,
+                'adults': adults,
+                'children': children
+            },
+            'sorting': {
+                'field': sort_by,
+                'order': sort_order
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/locations', methods=['GET'])
+def get_locations():
+    """Get all available locations"""
+    try:
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        locations = df['location'].unique().tolist()
+        return jsonify({'locations': sorted(locations)})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/amenities', methods=['GET'])
+def get_amenities():
+    """Get all available amenities"""
+    try:
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        # Extract all unique amenities
+        all_amenities = set()
+        for amenities_str in df['amenities']:
+            if pd.notna(amenities_str):
+                amenities_list = [amenity.strip() for amenity in amenities_str.split(',')]
+                all_amenities.update(amenities_list)
+        
+        return jsonify({'amenities': sorted(list(all_amenities))})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """Get hotel statistics"""
+    try:
+        df = load_hotel_data()
+        
+        if df.empty:
+            return jsonify({'error': 'No hotel data available'}), 500
+        
+        stats = {
+            'total_hotels': len(df),
+            'average_price': round(df['price_per_night'].mean(), 2),
+            'average_rating': round(df['guest_rating'].mean(), 2),
+            'price_range': {
+                'min': int(df['price_per_night'].min()),
+                'max': int(df['price_per_night'].max())
+            },
+            'rating_range': {
+                'min': round(df['guest_rating'].min(), 1),
+                'max': round(df['guest_rating'].max(), 1)
+            },
+            'stars_distribution': df['stars'].value_counts().to_dict(),
+            'locations_count': len(df['location'].unique())
+        }
+        
+        return jsonify(stats)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/')
+def home():
+    """API documentation"""
+    return jsonify({
+        'message': 'Hotel API',
+        'version': '1.0.0',
+        'endpoints': {
+            'GET /api/hotels': 'Get all hotels with optional filtering (sorted by guest rating desc)',
+            'GET /api/hotels/advanced': 'Get hotels with advanced filtering and custom sorting options',
+            'GET /api/hotels/<id>': 'Get a specific hotel by ID',
+            'GET /api/locations': 'Get all available locations',
+            'GET /api/amenities': 'Get all available amenities',
+            'GET /api/stats': 'Get hotel statistics'
+        },
+        'filter_parameters': {
+            'location': 'Filter by location (string)',
+            'check_in_date': 'Filter by check-in date (YYYY-MM-DD)',
+            'check_out_date': 'Filter by check-out date (YYYY-MM-DD)',
+            'min_stars': 'Minimum star rating (integer)',
+            'max_stars': 'Maximum star rating (integer)',
+            'min_rating': 'Minimum guest rating (float)',
+            'max_rating': 'Maximum guest rating (float)',
+            'amenities': 'Filter by amenities (comma-separated)',
+            'min_price': 'Minimum price per night (float)',
+            'max_price': 'Maximum price per night (float)',
+            'adults': 'Number of adults (integer)',
+            'children': 'Number of children (integer)'
+        },
+        'advanced_sorting_parameters': {
+            'sort_by': 'Sort by field (hotel_id, hotel_name, location, check_in_date, check_out_date, stars, guest_rating, price_per_night, max_adults, max_children)',
+            'sort_order': 'Sort order (asc or desc)'
+        },
+        'examples': {
+            'basic_filtering': '/api/hotels?location=New York&min_stars=4&max_price=200&adults=2',
+            'advanced_filtering': '/api/hotels/advanced?location=Miami&amenities=Pool,Beach&sort_by=price_per_night&sort_order=asc',
+            'rating_filter': '/api/hotels?min_rating=4.5&max_price=300',
+            'date_filter': '/api/hotels?check_in_date=2024-06-01&check_out_date=2024-06-05'
+        }
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5001) 

@@ -1,0 +1,101 @@
+hotel_id,name,stars,price_per_night,guest_rating,location,amenities,check_in,check_out,guests_adults,guests_children
+HOTEL001,Hotel A1,3,8939,5.0,Delhi,"['Baby Sitting / Child Services', 'Airport shuttle service', 'Power back up', 'Room service']",22-Oct-2025,24-Oct-2025,4,1
+HOTEL002,Hotel B2,4,6183,4.5,Hyderabad,"['Airport shuttle service', 'Air conditioning', 'Baby Sitting / Child Services', 'Room service', 'Game room', 'Business center']",21-Oct-2025,25-Oct-2025,1,0
+HOTEL003,Hotel C3,4,7100,4.0,Chennai,"['Airport shuttle service', 'Air conditioning', 'Room service', 'Restaurant', 'Baby Sitting / Child Services', '24-hour security']",21-Sep-2025,23-Sep-2025,1,2
+HOTEL004,Hotel D4,5,2338,3.5,Pune,"['Restaurant', 'Baby Sitting / Child Services', 'Air conditioning', 'Room service', 'Business center', '24-hour security']",07-Oct-2025,11-Oct-2025,4,0
+HOTEL005,Hotel E5,5,8691,3.5,Kolkata,"[""Children's play area"", 'Restaurant', 'Power back up', 'Air conditioning', '24-hour security']",10-Oct-2025,15-Oct-2025,2,1
+HOTEL006,Hotel F6,5,3794,3.0,Hyderabad,"['Baby Sitting / Child Services', 'Business center', ""Children's play area"", 'Game room', 'Power back up', 'Restaurant']",23-Aug-2025,27-Aug-2025,2,1
+HOTEL007,Hotel G7,4,4745,4.0,Udaipur,"['Power back up', 'Gym', 'Room service', 'Business center']",23-Aug-2025,26-Aug-2025,2,2
+HOTEL008,Hotel H8,5,2506,4.0,Goa,"['Room service', 'Restaurant', 'Game room', 'Parking', 'Gym', 'Business center']",20-Oct-2025,22-Oct-2025,2,1
+HOTEL009,Hotel I9,5,3940,5.0,Kolkata,"['Gym', ""Children's play area"", 'Airport shuttle service', 'Room service', 'Power back up']",31-Oct-2025,01-Nov-2025,4,0
+HOTEL010,Hotel J10,4,8608,3.0,Jaipur,"['Restaurant', 'Baby Sitting / Child Services', '24-hour security', 'Gym', 'Parking']",24-Sep-2025,26-Sep-2025,1,1
+HOTEL011,Hotel K11,3,9581,3.5,Jaipur,"['24-hour security', ""Children's play area"", 'Power back up', 'Baby Sitting / Child Services', 'Parking', 'Airport shuttle service']",20-Oct-2025,25-Oct-2025,1,0
+HOTEL012,Hotel L12,4,2742,4.5,Udaipur,"['Game room', 'Business center', 'Airport shuttle service', 'Parking', 'Room service']",13-Sep-2025,14-Sep-2025,1,2
+HOTEL013,Hotel M13,4,4062,4.5,Goa,"[""Children's play area"", 'Business center', 'Restaurant']",09-Aug-2025,14-Aug-2025,1,1
+HOTEL014,Hotel N14,4,6922,5.0,Udaipur,"['Airport shuttle service', 'Restaurant', ""Children's play area"", 'Baby Sitting / Child Services']",31-Aug-2025,01-Sep-2025,3,1
+HOTEL015,Hotel O15,5,3990,3.0,Delhi,"['Game room', 'Room service', 'Gym']",16-Oct-2025,19-Oct-2025,3,0
+HOTEL016,Hotel P16,5,2517,3.5,Pune,"['Gym', 'Baby Sitting / Child Services', 'Air conditioning', 'Airport shuttle service', 'Power back up']",26-Oct-2025,30-Oct-2025,3,0
+HOTEL017,Hotel Q17,3,7319,5.0,Mumbai,"['Game room', 'Business center', 'Parking', '24-hour security', 'Restaurant', 'Air conditioning']",28-Oct-2025,30-Oct-2025,2,0
+HOTEL018,Hotel R18,3,2710,3.5,Bangalore,"['Air conditioning', 'Room service', '24-hour security', 'Baby Sitting / Child Services', 'Restaurant', 'Gym']",15-Sep-2025,17-Sep-2025,4,1
+HOTEL019,Hotel S19,4,4496,3.0,Kolkata,"['24-hour security', ""Children's play area"", 'Gym']",22-Sep-2025,23-Sep-2025,4,1
+HOTEL020,Hotel T20,3,4135,3.5,Mumbai,"['Power back up', 'Restaurant', 'Parking', 'Game room', 'Air conditioning', 'Baby Sitting / Child Services']",02-Sep-2025,05-Sep-2025,3,2
+HOTEL021,Hotel U21,5,3697,5.0,Pune,"['Airport shuttle service', 'Power back up', 'Restaurant', 'Business center', 'Baby Sitting / Child Services', '24-hour security']",04-Oct-2025,06-Oct-2025,2,2
+HOTEL022,Hotel V22,5,9224,3.5,Jaipur,"[""Children's play area"", 'Airport shuttle service', 'Baby Sitting / Child Services', 'Game room', 'Restaurant', 'Power back up']",04-Sep-2025,06-Sep-2025,4,0
+HOTEL023,Hotel W23,3,5968,4.0,Jaipur,"['Airport shuttle service', 'Baby Sitting / Child Services', 'Game room', 'Power back up']",26-Aug-2025,29-Aug-2025,2,2
+HOTEL024,Hotel X24,4,6633,4.5,Pune,"['Game room', 'Air conditioning', 'Airport shuttle service', 'Baby Sitting / Child Services', 'Power back up']",24-Oct-2025,26-Oct-2025,2,2
+HOTEL025,Hotel Y25,5,3377,4.5,Udaipur,"['Room service', 'Air conditioning', 'Power back up', 'Business center', 'Gym']",17-Aug-2025,19-Aug-2025,1,0
+HOTEL026,Hotel Z26,3,8960,4.0,Bangalore,"['Parking', 'Gym', 'Airport shuttle service', 'Game room', 'Business center']",17-Oct-2025,19-Oct-2025,4,1
+HOTEL027,Hotel A27,4,9245,4.0,Hyderabad,"['Gym', 'Air conditioning', 'Baby Sitting / Child Services', 'Restaurant', 'Airport shuttle service']",05-Oct-2025,07-Oct-2025,2,1
+HOTEL028,Hotel B28,4,3788,3.0,Chennai,"['Power back up', 'Air conditioning', 'Room service', 'Gym', 'Parking', 'Baby Sitting / Child Services']",01-Sep-2025,06-Sep-2025,4,0
+HOTEL029,Hotel C29,3,5865,4.5,Kolkata,"[""Children's play area"", 'Power back up', 'Restaurant']",24-Aug-2025,27-Aug-2025,4,1
+HOTEL030,Hotel D30,3,8499,5.0,Hyderabad,"['Power back up', 'Parking', '24-hour security', 'Baby Sitting / Child Services', 'Restaurant']",23-Aug-2025,28-Aug-2025,3,0
+HOTEL031,Hotel E31,3,6421,5.0,Udaipur,"['24-hour security', ""Children's play area"", 'Room service']",13-Oct-2025,16-Oct-2025,2,2
+HOTEL032,Hotel F32,5,2308,4.0,Chennai,"['Gym', 'Room service', 'Airport shuttle service', 'Power back up']",21-Oct-2025,22-Oct-2025,4,0
+HOTEL033,Hotel G33,4,4399,3.5,Bangalore,"['24-hour security', 'Business center', 'Restaurant', 'Air conditioning']",08-Sep-2025,13-Sep-2025,2,0
+HOTEL034,Hotel H34,4,5062,4.5,Pune,"['Baby Sitting / Child Services', '24-hour security', 'Room service', 'Power back up', 'Gym', 'Restaurant']",05-Sep-2025,06-Sep-2025,3,0
+HOTEL035,Hotel I35,4,5513,3.0,Pune,"['Game room', 'Parking', 'Gym', 'Room service']",30-Aug-2025,03-Sep-2025,1,0
+HOTEL036,Hotel J36,5,3986,4.0,Mumbai,"['Airport shuttle service', 'Room service', 'Business center', 'Restaurant', '24-hour security', ""Children's play area""]",18-Aug-2025,22-Aug-2025,1,1
+HOTEL037,Hotel K37,5,5818,4.0,Kolkata,"['Power back up', 'Game room', 'Baby Sitting / Child Services']",06-Oct-2025,08-Oct-2025,3,2
+HOTEL038,Hotel L38,4,3239,5.0,Kolkata,"['Business center', '24-hour security', 'Airport shuttle service', ""Children's play area""]",16-Aug-2025,20-Aug-2025,2,2
+HOTEL039,Hotel M39,5,8713,4.0,Hyderabad,"['Parking', 'Baby Sitting / Child Services', 'Business center', ""Children's play area"", '24-hour security']",27-Aug-2025,31-Aug-2025,1,1
+HOTEL040,Hotel N40,5,5054,3.0,Bangalore,"['Game room', 'Baby Sitting / Child Services', 'Room service']",12-Aug-2025,13-Aug-2025,2,2
+HOTEL041,Hotel O41,5,4865,5.0,Jaipur,"['Air conditioning', 'Restaurant', 'Business center', 'Room service', 'Parking']",15-Aug-2025,16-Aug-2025,4,2
+HOTEL042,Hotel P42,4,4245,4.5,Kolkata,"['Parking', 'Gym', 'Baby Sitting / Child Services', 'Business center']",12-Aug-2025,16-Aug-2025,2,0
+HOTEL043,Hotel Q43,3,8738,4.5,Hyderabad,"['24-hour security', 'Air conditioning', 'Gym', 'Power back up', 'Baby Sitting / Child Services']",14-Aug-2025,15-Aug-2025,1,1
+HOTEL044,Hotel R44,4,4491,4.0,Bangalore,"['Air conditioning', 'Power back up', 'Baby Sitting / Child Services', '24-hour security']",25-Aug-2025,27-Aug-2025,4,1
+HOTEL045,Hotel S45,5,8293,4.5,Bangalore,"['Airport shuttle service', 'Room service', ""Children's play area"", 'Baby Sitting / Child Services', 'Restaurant', 'Business center']",15-Sep-2025,17-Sep-2025,2,2
+HOTEL046,Hotel T46,3,9004,4.5,Delhi,"['Air conditioning', 'Parking', 'Airport shuttle service', 'Restaurant', 'Game room']",18-Oct-2025,20-Oct-2025,2,2
+HOTEL047,Hotel U47,4,9518,5.0,Delhi,"['Parking', 'Restaurant', 'Game room', 'Baby Sitting / Child Services', 'Air conditioning']",24-Aug-2025,25-Aug-2025,4,2
+HOTEL048,Hotel V48,3,6490,3.0,Goa,"['Power back up', 'Airport shuttle service', 'Room service']",29-Oct-2025,30-Oct-2025,1,2
+HOTEL049,Hotel W49,5,4392,5.0,Delhi,"['Baby Sitting / Child Services', 'Air conditioning', '24-hour security']",05-Sep-2025,07-Sep-2025,4,2
+HOTEL050,Hotel X50,3,3310,3.0,Jaipur,"['Restaurant', 'Game room', '24-hour security', 'Gym', 'Power back up', ""Children's play area""]",13-Sep-2025,16-Sep-2025,3,1
+HOTEL051,Hotel Y51,3,6404,4.5,Delhi,"['Room service', 'Business center', 'Game room', 'Restaurant', 'Power back up', '24-hour security']",04-Sep-2025,06-Sep-2025,3,1
+HOTEL052,Hotel Z52,4,7492,3.0,Kolkata,"['Restaurant', 'Airport shuttle service', 'Baby Sitting / Child Services', 'Game room']",24-Oct-2025,28-Oct-2025,2,2
+HOTEL053,Hotel A53,3,8328,3.0,Mumbai,"['Air conditioning', 'Parking', 'Room service']",06-Aug-2025,10-Aug-2025,2,1
+HOTEL054,Hotel B54,5,8244,3.0,Goa,"['Power back up', 'Air conditioning', 'Airport shuttle service', 'Business center', 'Game room']",02-Oct-2025,04-Oct-2025,4,2
+HOTEL055,Hotel C55,3,9530,4.0,Udaipur,"['Airport shuttle service', 'Air conditioning', 'Baby Sitting / Child Services', 'Gym']",29-Oct-2025,02-Nov-2025,2,0
+HOTEL056,Hotel D56,5,9124,3.5,Bangalore,"['Restaurant', 'Power back up', 'Air conditioning', '24-hour security', 'Parking']",17-Oct-2025,21-Oct-2025,4,2
+HOTEL057,Hotel E57,3,4452,4.5,Delhi,"['Power back up', 'Baby Sitting / Child Services', 'Gym', 'Restaurant', 'Business center', 'Room service']",18-Oct-2025,23-Oct-2025,2,2
+HOTEL058,Hotel F58,4,2416,4.0,Delhi,"[""Children's play area"", 'Game room', 'Power back up', 'Room service', 'Parking']",10-Aug-2025,12-Aug-2025,1,2
+HOTEL059,Hotel G59,3,9375,4.0,Hyderabad,"['Power back up', 'Air conditioning', '24-hour security', 'Room service', 'Airport shuttle service', 'Gym']",28-Oct-2025,01-Nov-2025,2,1
+HOTEL060,Hotel H60,5,8311,3.0,Delhi,"['Game room', 'Business center', 'Room service', 'Airport shuttle service']",06-Sep-2025,09-Sep-2025,3,1
+HOTEL061,Hotel I61,5,6064,5.0,Udaipur,"[""Children's play area"", 'Airport shuttle service', 'Business center', 'Game room', 'Restaurant', 'Room service']",18-Sep-2025,20-Sep-2025,4,0
+HOTEL062,Hotel J62,4,4024,3.0,Delhi,"['Business center', 'Parking', 'Restaurant', 'Gym', 'Air conditioning', ""Children's play area""]",10-Sep-2025,15-Sep-2025,3,2
+HOTEL063,Hotel K63,4,4511,4.0,Mumbai,"['Business center', 'Gym', 'Room service', 'Game room', 'Airport shuttle service']",10-Aug-2025,11-Aug-2025,3,0
+HOTEL064,Hotel L64,4,6444,3.0,Delhi,"['24-hour security', 'Air conditioning', 'Game room', 'Power back up', 'Room service']",09-Oct-2025,12-Oct-2025,1,0
+HOTEL065,Hotel M65,5,9717,3.5,Goa,"['Airport shuttle service', 'Gym', '24-hour security', 'Power back up']",23-Aug-2025,26-Aug-2025,4,2
+HOTEL066,Hotel N66,5,6570,4.0,Hyderabad,"['Power back up', 'Room service', 'Baby Sitting / Child Services', 'Parking', 'Business center']",17-Aug-2025,22-Aug-2025,2,2
+HOTEL067,Hotel O67,3,2624,4.5,Bangalore,"['Game room', 'Parking', ""Children's play area""]",16-Sep-2025,19-Sep-2025,2,2
+HOTEL068,Hotel P68,5,5624,3.5,Udaipur,"[""Children's play area"", 'Airport shuttle service', 'Baby Sitting / Child Services', 'Air conditioning', 'Room service', 'Power back up']",17-Oct-2025,22-Oct-2025,1,2
+HOTEL069,Hotel Q69,3,9192,3.5,Pune,"['Parking', 'Power back up', ""Children's play area"", 'Game room', 'Gym']",16-Aug-2025,20-Aug-2025,1,0
+HOTEL070,Hotel R70,3,5654,4.0,Mumbai,"['Business center', 'Airport shuttle service', 'Room service', 'Game room', ""Children's play area""]",01-Nov-2025,03-Nov-2025,1,2
+HOTEL071,Hotel S71,3,7601,5.0,Bangalore,"['Airport shuttle service', 'Parking', 'Gym', 'Room service']",15-Aug-2025,20-Aug-2025,1,2
+HOTEL072,Hotel T72,4,5904,3.5,Udaipur,"['Business center', 'Baby Sitting / Child Services', 'Air conditioning']",24-Sep-2025,25-Sep-2025,4,2
+HOTEL073,Hotel U73,5,8748,5.0,Udaipur,"[""Children's play area"", 'Business center', 'Air conditioning']",03-Oct-2025,05-Oct-2025,2,2
+HOTEL074,Hotel V74,4,6194,5.0,Udaipur,"['Gym', 'Airport shuttle service', 'Business center', 'Baby Sitting / Child Services', ""Children's play area"", '24-hour security']",07-Aug-2025,09-Aug-2025,1,1
+HOTEL075,Hotel W75,5,5682,5.0,Delhi,"['24-hour security', 'Game room', ""Children's play area"", 'Restaurant', 'Parking', 'Airport shuttle service']",24-Sep-2025,28-Sep-2025,3,2
+HOTEL076,Hotel X76,3,7604,5.0,Kolkata,"[""Children's play area"", 'Restaurant', 'Power back up', 'Business center', 'Baby Sitting / Child Services', 'Gym']",27-Aug-2025,30-Aug-2025,1,1
+HOTEL077,Hotel Y77,3,4247,3.0,Mumbai,"['Gym', 'Room service', 'Baby Sitting / Child Services', 'Game room', 'Parking']",27-Aug-2025,31-Aug-2025,2,2
+HOTEL078,Hotel Z78,5,9780,3.5,Bangalore,"['24-hour security', ""Children's play area"", 'Baby Sitting / Child Services']",09-Aug-2025,14-Aug-2025,3,1
+HOTEL079,Hotel A79,3,8384,4.0,Udaipur,"['Airport shuttle service', 'Restaurant', 'Game room', 'Power back up', '24-hour security']",17-Oct-2025,20-Oct-2025,1,2
+HOTEL080,Hotel B80,4,4009,3.0,Goa,"[""Children's play area"", '24-hour security', 'Gym', 'Restaurant', 'Business center', 'Parking']",17-Aug-2025,21-Aug-2025,4,0
+HOTEL081,Hotel C81,4,5221,3.5,Delhi,"['Game room', 'Power back up', 'Gym', 'Room service', 'Parking']",29-Aug-2025,01-Sep-2025,1,1
+HOTEL082,Hotel D82,5,5251,5.0,Mumbai,"['24-hour security', 'Power back up', 'Baby Sitting / Child Services', 'Airport shuttle service']",18-Sep-2025,19-Sep-2025,3,2
+HOTEL083,Hotel E83,3,6932,5.0,Delhi,"[""Children's play area"", 'Parking', '24-hour security', 'Gym', 'Restaurant', 'Air conditioning']",23-Aug-2025,25-Aug-2025,1,1
+HOTEL084,Hotel F84,4,3849,5.0,Bangalore,"[""Children's play area"", 'Room service', 'Restaurant', 'Game room', 'Airport shuttle service', 'Parking']",15-Aug-2025,16-Aug-2025,2,1
+HOTEL085,Hotel G85,3,9440,5.0,Goa,"['Gym', 'Restaurant', 'Game room', 'Room service', 'Parking']",03-Oct-2025,06-Oct-2025,3,2
+HOTEL086,Hotel H86,3,8027,4.0,Kolkata,"['Parking', 'Air conditioning', 'Game room', '24-hour security', 'Business center', 'Restaurant']",26-Sep-2025,28-Sep-2025,4,1
+HOTEL087,Hotel I87,5,9238,4.0,Pune,"['Airport shuttle service', 'Game room', ""Children's play area"", 'Parking', 'Business center', 'Restaurant']",23-Oct-2025,27-Oct-2025,3,2
+HOTEL088,Hotel J88,5,3549,4.5,Bangalore,"['Business center', 'Game room', '24-hour security', ""Children's play area"", 'Baby Sitting / Child Services', 'Airport shuttle service']",01-Nov-2025,06-Nov-2025,4,1
+HOTEL089,Hotel K89,4,2607,4.5,Mumbai,"['Air conditioning', 'Gym', 'Room service']",11-Aug-2025,12-Aug-2025,4,1
+HOTEL090,Hotel L90,5,4805,3.0,Kolkata,"['Parking', 'Business center', 'Restaurant', 'Airport shuttle service', '24-hour security', 'Game room']",06-Aug-2025,10-Aug-2025,3,1
+HOTEL091,Hotel M91,4,8752,3.5,Kolkata,"['Game room', 'Business center', '24-hour security', 'Airport shuttle service', 'Baby Sitting / Child Services', 'Restaurant']",06-Sep-2025,07-Sep-2025,4,2
+HOTEL092,Hotel N92,3,9748,5.0,Mumbai,"['Restaurant', 'Gym', 'Parking']",20-Oct-2025,25-Oct-2025,3,2
+HOTEL093,Hotel O93,3,4033,5.0,Goa,"['Room service', 'Airport shuttle service', 'Baby Sitting / Child Services', 'Gym']",29-Sep-2025,01-Oct-2025,2,1
+HOTEL094,Hotel P94,5,3494,3.0,Hyderabad,"['Airport shuttle service', 'Baby Sitting / Child Services', 'Air conditioning', 'Business center', 'Gym', '24-hour security']",22-Aug-2025,27-Aug-2025,3,0
+HOTEL095,Hotel Q95,3,7894,4.5,Kolkata,"['Gym', 'Game room', '24-hour security', 'Power back up', 'Airport shuttle service']",26-Aug-2025,30-Aug-2025,4,0
+HOTEL096,Hotel R96,3,5507,3.5,Udaipur,"['Parking', 'Power back up', 'Air conditioning', '24-hour security']",02-Oct-2025,05-Oct-2025,3,1
+HOTEL097,Hotel S97,5,7227,3.0,Chennai,"['Power back up', 'Restaurant', 'Business center', 'Room service', 'Airport shuttle service']",11-Aug-2025,13-Aug-2025,1,2
+HOTEL098,Hotel T98,3,4856,5.0,Kolkata,"['Room service', 'Game room', 'Airport shuttle service', 'Gym', '24-hour security', 'Baby Sitting / Child Services']",19-Oct-2025,21-Oct-2025,4,1
+HOTEL099,Hotel U99,4,6008,4.0,Jaipur,"[""Children's play area"", 'Air conditioning', '24-hour security', 'Baby Sitting / Child Services']",27-Sep-2025,30-Sep-2025,1,2
+HOTEL100,Hotel V100,3,9938,3.0,Goa,"['Parking', 'Air conditioning', 'Airport shuttle service', '24-hour security', 'Game room']",31-Aug-2025,03-Sep-2025,3,2
