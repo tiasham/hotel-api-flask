@@ -885,6 +885,173 @@ def root():
         }
     })
 
+@app.route('/mcp/tools', methods=['GET'])
+def mcp_tools():
+    """MCP tool discovery endpoint for Retell"""
+    return jsonify({
+        "tools": [
+            {
+                "name": "searchHotels",
+                "description": "Search for hotels based on customer preferences",
+                "parameters": {
+                    "location": {"type": "string", "required": True, "description": "City or location"},
+                    "check_in_date": {"type": "string", "required": True, "description": "Check-in date (YYYY-MM-DD)"},
+                    "check_out_date": {"type": "string", "required": True, "description": "Check-out date (YYYY-MM-DD)"},
+                    "adults": {"type": "integer", "required": True, "description": "Number of adults"},
+                    "children": {"type": "integer", "required": False, "description": "Number of children"},
+                    "amenities": {"type": "string", "required": False, "description": "Preferred amenities (comma-separated)"},
+                    "min_price": {"type": "number", "required": False, "description": "Minimum price per night"},
+                    "max_price": {"type": "number", "required": False, "description": "Maximum price per night"},
+                    "min_stars": {"type": "integer", "required": False, "description": "Minimum star rating (1-5)"},
+                    "max_stars": {"type": "integer", "required": False, "description": "Maximum star rating (1-5)"},
+                    "min_rating": {"type": "number", "required": False, "description": "Minimum guest rating (0.0-5.0)"},
+                    "max_rating": {"type": "number", "required": False, "description": "Maximum guest rating (0.0-5.0)"}
+                }
+            },
+            {
+                "name": "getLocations",
+                "description": "Get all available hotel locations",
+                "parameters": {}
+            },
+            {
+                "name": "getAmenities",
+                "description": "Get all available hotel amenities",
+                "parameters": {}
+            }
+        ]
+    })
+
+@app.route('/mcp/execute', methods=['POST'])
+def mcp_execute():
+    """MCP tool execution endpoint for Retell"""
+    try:
+        data = request.json
+        tool_name = data.get('tool')
+        parameters = data.get('parameters', {})
+        
+        if tool_name == 'searchHotels':
+            # Use the existing search endpoint logic
+            result = search_hotels_logic(parameters)
+            return jsonify({
+                'success': True,
+                'result': result,
+                'tool': tool_name
+            })
+        
+        elif tool_name == 'getLocations':
+            df = load_hotel_data()
+            locations = df['location'].unique().tolist()
+            return jsonify({
+                'success': True,
+                'result': {
+                    'locations': locations,
+                    'count': len(locations)
+                },
+                'tool': tool_name
+            })
+        
+        elif tool_name == 'getAmenities':
+            df = load_hotel_data()
+            all_amenities = []
+            for amenities_str in df['amenities']:
+                amenities = amenities_str.split(',')
+                all_amenities.extend([a.strip() for a in amenities])
+            
+            unique_amenities = list(set(all_amenities))
+            return jsonify({
+                'success': True,
+                'result': {
+                    'amenities': unique_amenities,
+                    'count': len(unique_amenities)
+                },
+                'tool': tool_name
+            })
+        
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Unknown tool: {tool_name}'
+            }), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+def search_hotels_logic(parameters):
+    """Logic for searching hotels (extracted from existing search endpoint)"""
+    try:
+        df = load_hotel_data()
+        
+        # Apply filters
+        if 'location' in parameters and parameters['location']:
+            df = df[df['location'].str.contains(parameters['location'], case=False, na=False)]
+        
+        if 'check_in_date' in parameters and parameters['check_in_date']:
+            check_in = pd.to_datetime(parameters['check_in_date'])
+            df = df[df['check_in_date'] >= check_in]
+        
+        if 'check_out_date' in parameters and parameters['check_out_date']:
+            check_out = pd.to_datetime(parameters['check_out_date'])
+            df = df[df['check_out_date'] <= check_out]
+        
+        if 'adults' in parameters and parameters['adults']:
+            adults = int(parameters['adults'])
+            df = df[df['max_adults'] >= adults]
+        
+        if 'children' in parameters and parameters['children']:
+            children = int(parameters['children'])
+            df = df[df['max_children'] >= children]
+        
+        if 'amenities' in parameters and parameters['amenities']:
+            amenities = parameters['amenities'].split(',')
+            for amenity in amenities:
+                df = df[df['amenities'].str.contains(amenity.strip(), case=False, na=False)]
+        
+        if 'min_price' in parameters and parameters['min_price']:
+            min_price = float(parameters['min_price'])
+            df = df[df['price_per_night'] >= min_price]
+        
+        if 'max_price' in parameters and parameters['max_price']:
+            max_price = float(parameters['max_price'])
+            df = df[df['price_per_night'] <= max_price]
+        
+        if 'min_stars' in parameters and parameters['min_stars']:
+            min_stars = int(parameters['min_stars'])
+            df = df[df['stars'] >= min_stars]
+        
+        if 'max_stars' in parameters and parameters['max_stars']:
+            max_stars = int(parameters['max_stars'])
+            df = df[df['stars'] <= max_stars]
+        
+        if 'min_rating' in parameters and parameters['min_rating']:
+            min_rating = float(parameters['min_rating'])
+            df = df[df['guest_rating'] >= min_rating]
+        
+        if 'max_rating' in parameters and parameters['max_rating']:
+            max_rating = float(parameters['max_rating'])
+            df = df[df['guest_rating'] <= max_rating]
+        
+        # Sort by rating and get top 5
+        df = df.sort_values('guest_rating', ascending=False).head(5)
+        
+        # Convert to list of dictionaries
+        hotels = df.to_dict('records')
+        
+        return {
+            'total_matches': len(df),
+            'hotels': hotels,
+            'search_criteria': parameters,
+            'message': f"Found {len(hotels)} hotels matching your criteria"
+        }
+        
+    except Exception as e:
+        return {
+            'error': str(e),
+            'message': 'Error occurred while searching hotels'
+        }
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
     app.run(debug=False, host='0.0.0.0', port=port) 
