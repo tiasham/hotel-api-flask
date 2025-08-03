@@ -176,6 +176,18 @@ def health():
         'timestamp': datetime.now().isoformat()
     })
 
+@app.route('/openapi.json')
+def openapi_spec():
+    """Serve OpenAPI 3.0 specification for Retell"""
+    try:
+        with open('openapi.json', 'r') as f:
+            spec = json.load(f)
+        return jsonify(spec)
+    except Exception as e:
+        return jsonify({
+            'error': f'Failed to load OpenAPI specification: {str(e)}'
+        }), 500
+
 @app.route('/tools', methods=['GET'])
 def get_tools():
     """Get available tools - Retell will call this to discover tools"""
