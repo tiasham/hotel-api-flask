@@ -139,4 +139,11 @@ dmypy.json
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
+
+# Railway specific
+.railway/
+railway.toml
+
+# Docker
+.dockerignore 
