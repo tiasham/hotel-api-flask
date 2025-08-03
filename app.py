@@ -374,6 +374,15 @@ def get_stats():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Simple health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'message': 'Hotel API is running',
+        'timestamp': datetime.now().isoformat()
+    })
+
 @app.route('/')
 def home():
     """API documentation"""
