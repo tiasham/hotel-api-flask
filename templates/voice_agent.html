@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking Voice Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .control-button {
+            padding: 8px 16px;
+            border: 1px solid #e1e5e9;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .control-button:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 15px;
+            max-width: 70%;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        .example-queries {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .example-query {
+            padding: 6px 12px;
+            background: #f0f2f5;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .example-query:hover {
+            background: #e4e6e9;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <h1>🏨 Hotel Booking Assistant</h1>
+            <p>Powered by GPT-4o, Whisper, and ElevenLabs</p>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                Welcome! I'm your hotel booking assistant. I can help you search for hotels, get details, and make reservations.
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <form class="chat-input-form" id="chatForm">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="messageInput" 
+                    placeholder="Type your message here..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="send-button" id="sendButton">
+                    ➤
+                </button>
+            </form>
+
+            <div class="example-queries">
+                <div class="example-query" onclick="sendExample('Find hotels in Mumbai')">Find hotels in Mumbai</div>
+                <div class="example-query" onclick="sendExample('Search for hotels with pool in Delhi')">Hotels with pool in Delhi</div>
+                <div class="example-query" onclick="sendExample('What amenities do you have?')">Available amenities</div>
+                <div class="example-query" onclick="sendExample('Book a room for 2 adults')">Book a room</div>
+            </div>
+
+            <div class="controls">
+                <button class="control-button" onclick="clearChat()">Clear Chat</button>
+                <button class="control-button" onclick="loadHistory()">Load History</button>
+                <button class="control-button" onclick="checkStatus()">Check Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatForm = document.getElementById('chatForm');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Check status on load
+        checkStatus();
+
+        function sendExample(text) {
+            messageInput.value = text;
+            sendMessage();
+        }
+
+        function addMessage(content, isUser = false, timestamp = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = content;
+            
+            messageDiv.appendChild(messageContent);
+            
+            if (timestamp) {
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date(timestamp).toLocaleTimeString();
+                messageDiv.appendChild(timeDiv);
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true, new Date().toISOString());
+            messageInput.value = '';
+            sendButton.disabled = true;
+
+            // Show typing indicator
+            showTyping();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                
+                hideTyping();
+
+                if (data.error) {
+                    addMessage(`Error: ${data.error}`, false, data.timestamp);
+                } else {
+                    addMessage(data.response, false, data.timestamp);
+                }
+            } catch (error) {
+                hideTyping();
+                addMessage('Sorry, I encountered an error. Please try again.', false);
+                console.error('Error:', error);
+            } finally {
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        async function clearChat() {
+            try {
+                await fetch('/api/clear', { method: 'POST' });
+                chatMessages.innerHTML = `
+                    <div class="welcome-message">
+                        Welcome! I'm your hotel booking assistant. I can help you search for hotels, get details, and make reservations.
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error clearing chat:', error);
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+                
+                if (data.history && data.history.length > 0) {
+                    chatMessages.innerHTML = `
+                        <div class="welcome-message">
+                            Welcome! I'm your hotel booking assistant. I can help you search for hotels, get details, and make reservations.
+                        </div>
+                    `;
+                    
+                    data.history.forEach(msg => {
+                        addMessage(msg.content, msg.role === 'user');
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                if (data.status === 'ready') {
+                    statusIndicator.style.background = '#4CAF50';
+                    console.log(`Voice agent ready with ${data.tools_count} tools`);
+                } else {
+                    statusIndicator.style.background = '#f44336';
+                    console.log('Voice agent not ready');
+                }
+            } catch (error) {
+                statusIndicator.style.background = '#f44336';
+                console.error('Error checking status:', error);
+            }
+        }
+
+        // Event listeners
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-focus input
+        messageInput.focus();
+    </script>
+</body>
+</html>

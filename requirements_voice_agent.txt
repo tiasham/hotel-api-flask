@@ -1,0 +1,36 @@
+# Custom Voice Agent Dependencies
+# Core dependencies
+flask==2.3.3
+pandas==2.1.1
+requests==2.31.0
+
+# LiveKit Agents Framework
+livekit-agents==0.1.0
+livekit-server-sdk==1.0.0
+livekit-client==1.0.0
+
+# OpenAI for GPT-4o and Whisper
+openai==1.3.0
+
+# ElevenLabs for TTS
+elevenlabs==0.2.26
+
+# Silero for VAD
+torch==2.1.0
+torchaudio==2.1.0
+
+# Async support
+aiohttp==3.8.6
+asyncio-mqtt==0.16.1
+
+# Audio processing
+pydub==0.25.1
+numpy==1.24.3
+
+# Utilities
+python-dotenv==1.0.0
+pydantic==2.4.2
+
+# Optional: For better audio handling
+soundfile==0.12.1
+librosa==0.10.1
