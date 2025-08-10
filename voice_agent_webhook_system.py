@@ -271,13 +271,16 @@ class VoiceAgentWebhookSystem:
                 df = df[df['guests_adults'] + df['guests_children'] >= total_guests]
                 logger.info(f"After room capacity filter (>= {total_guests} total guests): {len(df)} hotels")
             
-            # Amenities filter (case-insensitive partial match)
+            # Amenities filter (case-insensitive partial match with flexible matching)
             if booking_info.get('amenities'):
                 amenities_list = [amenity.strip().lower() for amenity in booking_info['amenities'].split(',')]
                 for amenity in amenities_list:
                     if amenity:  # Skip empty strings
-                        df = df[df['amenities'].str.lower().str.contains(amenity, na=False)]
-                        logger.info(f"After amenity filter '{amenity}': {len(df)} hotels")
+                        # More flexible matching: split by common separators and check if any part matches
+                        amenity_parts = amenity.replace('/', ' ').replace('-', ' ').replace('&', ' ').split()
+                        # Check if any part of the amenity matches any part of the hotel's amenities
+                        df = df[df['amenities'].str.lower().apply(lambda x: any(part in x.lower() for part in amenity_parts if part))]
+                        logger.info(f"After amenity filter '{amenity}' (parts: {amenity_parts}): {len(df)} hotels")
             
             # Price filters
             if booking_info.get('min_price'):
@@ -359,6 +362,82 @@ class VoiceAgentWebhookSystem:
                         
                 except ValueError as e:
                     logger.warning(f"Date parsing error: {e}, skipping date filter")
+            
+            # If no results found and amenities were specified, try without amenities filter
+            if df.empty and booking_info.get('amenities'):
+                logger.info("No results found with amenities filter, trying without amenities...")
+                # Re-run the search without amenities filter
+                df = self.hotel_df.copy()
+                
+                # Re-apply all other filters except amenities
+                if booking_info.get('location'):
+                    location_filter = booking_info['location'].strip().lower()
+                    df = df[df['location'].str.lower().str.contains(location_filter, na=False)]
+                
+                if booking_info.get('adults'):
+                    adults_needed = int(booking_info['adults'])
+                    df = df[df['guests_adults'] >= adults_needed]
+                
+                if booking_info.get('children'):
+                    children_needed = int(booking_info['children'])
+                    df = df[df['guests_children'] >= children_needed]
+                
+                if booking_info.get('rooms') and booking_info.get('guests_per_room'):
+                    rooms_needed = int(booking_info['rooms'])
+                    guests_per_room = int(booking_info['guests_per_room'])
+                    total_guests = rooms_needed * guests_per_room
+                    df = df[df['guests_adults'] + df['guests_children'] >= total_guests]
+                
+                if booking_info.get('min_price'):
+                    min_price = float(booking_info['min_price'])
+                    df = df[df['price_per_night'] >= min_price]
+                
+                if booking_info.get('max_price'):
+                    max_price = float(booking_info['max_price'])
+                    df = df[df['price_per_night'] <= max_price]
+                
+                if booking_info.get('min_stars'):
+                    min_stars = int(booking_info['min_stars'])
+                    df = df[df['stars'] >= min_stars]
+                
+                if booking_info.get('max_stars'):
+                    max_stars = int(booking_info['max_stars'])
+                    df = df[df['stars'] <= max_stars]
+                
+                if booking_info.get('min_rating'):
+                    min_rating = float(booking_info['min_rating'])
+                    df = df[df['guest_rating'] >= min_rating]
+                
+                if booking_info.get('max_rating'):
+                    max_rating = float(booking_info['max_rating'])
+                    df = df[df['guest_rating'] <= max_rating]
+                
+                # Re-apply date filter
+                if booking_info.get('check_in_date') and booking_info.get('check_out_date'):
+                    try:
+                        check_in = datetime.strptime(booking_info['check_in_date'], '%Y-%m-%d')
+                        check_out = datetime.strptime(booking_info['check_out_date'], '%Y-%m-%d')
+                        
+                        available_hotels = []
+                        for _, hotel in df.iterrows():
+                            try:
+                                csv_check_in = datetime.strptime(hotel['check_in'], '%d-%b-%Y')
+                                csv_check_out = datetime.strptime(hotel['check_out'], '%d-%b-%Y')
+                                
+                                if csv_check_in <= check_in and csv_check_out >= check_out:
+                                    available_hotels.append(hotel)
+                                    
+                            except (ValueError, TypeError) as e:
+                                continue
+                        
+                        if available_hotels:
+                            df = pd.DataFrame(available_hotels)
+                            logger.info(f"After fallback search (without amenities): {len(df)} hotels found")
+                        else:
+                            df = pd.DataFrame()
+                            
+                    except ValueError as e:
+                        logger.warning(f"Date parsing error in fallback: {e}")
             
             # Sort by multiple criteria: rating first, then price (ascending for better deals)
             if not df.empty:
