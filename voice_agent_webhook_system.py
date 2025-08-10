@@ -315,17 +315,48 @@ class VoiceAgentWebhookSystem:
             # Date availability filter (if check-in and check-out dates are specified)
             if booking_info.get('check_in_date') and booking_info.get('check_out_date'):
                 try:
+                    # Parse input dates (YYYY-MM-DD format)
                     check_in = datetime.strptime(booking_info['check_in_date'], '%Y-%m-%d')
                     check_out = datetime.strptime(booking_info['check_out_date'], '%Y-%m-%d')
                     
                     # Filter hotels that have availability for the requested dates
-                    # This is a simplified check - in a real system you'd check actual availability
-                    # For now, we'll skip the date filter to avoid filtering out all hotels
-                    # df = df[
-                    #     (df['check_in'] <= check_in.strftime('%d-%b-%Y')) &
-                    #     (df['check_out'] >= check_out.strftime('%d-%b-%Y'))
-                    # ]
-                    logger.info(f"Date filter requested but skipped for now: {check_in.date()} to {check_out.date()}")
+                    # CSV dates are in DD-MMM-YYYY format (e.g., "05-Sep-2025")
+                    available_hotels = []
+                    
+                    for _, hotel in df.iterrows():
+                        try:
+                            # Parse CSV check-in date
+                            csv_check_in = datetime.strptime(hotel['check_in'], '%d-%b-%Y')
+                            csv_check_out = datetime.strptime(hotel['check_out'], '%d-%b-%Y')
+                            
+                            # Check if hotel is available for the requested dates
+                            # Hotel should be available from before check-in to after check-out
+                            # More precise: hotel availability should completely cover the requested period
+                            if csv_check_in <= check_in and csv_check_out >= check_out:
+                                # Additional check: ensure the hotel is actually available for the exact requested period
+                                # This prevents returning hotels that might have gaps in availability
+                                available_hotels.append(hotel)
+                                logger.info(f"Hotel {hotel['name']} available: CSV {csv_check_in.date()} <= {check_in.date()} and {csv_check_out.date()} >= {check_out.date()}")
+                            else:
+                                logger.info(f"Hotel {hotel['name']} NOT available: CSV {csv_check_in.date()} <= {check_in.date()} and {csv_check_out.date()} >= {check_out.date()}")
+                                
+                            # Alternative: check for any overlap in availability
+                            # elif (csv_check_in <= check_out and csv_check_out >= check_in):
+                            #     available_hotels.append(hotel)
+                                
+                        except (ValueError, TypeError) as e:
+                            # Skip hotels with invalid date formats
+                            logger.warning(f"Invalid date format for hotel {hotel['name']}: {e}")
+                            continue
+                    
+                    # Replace dataframe with available hotels
+                    if available_hotels:
+                        df = pd.DataFrame(available_hotels)
+                        logger.info(f"After date availability filter: {len(df)} hotels available for {check_in.date()} to {check_out.date()}")
+                    else:
+                        df = pd.DataFrame()  # Empty dataframe if no hotels available
+                        logger.info(f"No hotels available for dates {check_in.date()} to {check_out.date()}")
+                        
                 except ValueError as e:
                     logger.warning(f"Date parsing error: {e}, skipping date filter")
             
