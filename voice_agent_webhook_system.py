@@ -892,12 +892,38 @@ def advanced_hotel_search():
         
         hotels = webhook_system.search_hotels_from_dataset(temp_state)
         
-        return jsonify({
+        # Format response to match AI agent expectations
+        response_data = {
             'success': True,
             'hotels': hotels,
             'count': len(hotels),
             'filters_applied': temp_state['booking_info']
-        })
+        }
+        
+        # Add AI agent expected fields
+        if hotels:
+            top_hotel = hotels[0]  # First hotel (already sorted by rating and price)
+            response_data.update({
+                'hotel_count': len(hotels),
+                'hotels_found': hotels,
+                'top_hotel_name': top_hotel.get('name', ''),
+                'top_hotel_price': top_hotel.get('price_per_night', 0),
+                'top_hotel_rating': top_hotel.get('guest_rating', 0),
+                'top_hotel_stars': top_hotel.get('stars', 0),
+                'top_hotel_location': top_hotel.get('location', '')
+            })
+        else:
+            response_data.update({
+                'hotel_count': 0,
+                'hotels_found': [],
+                'top_hotel_name': '',
+                'top_hotel_price': 0,
+                'top_hotel_rating': 0,
+                'top_hotel_stars': 0,
+                'top_hotel_location': ''
+            })
+        
+        return jsonify(response_data)
         
     except Exception as e:
         logger.error(f"Error in advanced hotel search: {e}")
