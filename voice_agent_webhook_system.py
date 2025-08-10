@@ -320,11 +320,12 @@ class VoiceAgentWebhookSystem:
                     
                     # Filter hotels that have availability for the requested dates
                     # This is a simplified check - in a real system you'd check actual availability
-                    df = df[
-                        (df['check_in'] <= check_in.strftime('%d-%b-%Y')) &
-                        (df['check_out'] >= check_out.strftime('%d-%b-%Y'))
-                    ]
-                    logger.info(f"After date availability filter: {len(df)} hotels")
+                    # For now, we'll skip the date filter to avoid filtering out all hotels
+                    # df = df[
+                    #     (df['check_in'] <= check_in.strftime('%d-%b-%Y')) &
+                    #     (df['check_out'] >= check_out.strftime('%d-%b-%Y'))
+                    # ]
+                    logger.info(f"Date filter requested but skipped for now: {check_in.date()} to {check_out.date()}")
                 except ValueError as e:
                     logger.warning(f"Date parsing error: {e}, skipping date filter")
             
